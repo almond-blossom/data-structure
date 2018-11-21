@@ -203,6 +203,17 @@ class Tree {
         }
         return node;
     }
+
+    /**
+     * 트리의 최대값 반환
+     * @param {Node} node
+     */
+    maximum(node) {
+        while (node.right) {
+            node = node.right;
+        }
+        return node;
+    }
 }
 
 const tree = new Tree();
@@ -238,6 +249,9 @@ console.log(tree.search(18).data);
 
 console.log('\n최소값: 15');
 console.log(tree.minimum(tree.search(15)).data);
+
+console.log('\n최대값: 15');
+console.log(tree.maximum(tree.search(15)).data);
 
 console.log('\nsuccessor: 15');
 console.log(tree.successor(tree.search(15)).data);
