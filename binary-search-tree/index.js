@@ -17,7 +17,7 @@ class Tree {
      * @return {Array.<number>} 전위 순회로 정렬된 키 목록
      */
     preorder() {
-        const array = [];
+        const array = [];``
         function traverse(node) {
             if (node) {
                 array.push(node.data);
@@ -118,20 +118,17 @@ class Tree {
      * @return {Node}
      */
     search(id) {
-        let count = 0;
         function search(node, id) {
-            count += 1;
             if (node.data.id > id) {
                 return search(node.left, id);
             } else if (node.data.id < id) {
                 return search(node.right, id);
             } else {
-                return node.data;
+                return node;
             }
         }
         let found = search(this.root, id);
-        console.log(found);
-        console.log('count', count);
+        return found;
     }
 
     /**
@@ -154,6 +151,64 @@ class Tree {
                 parent.right = node;
             }
         }
+    }
+
+    /**
+     * @param {Node} node
+     */
+    delete(node) {
+        if (!node.left && !node.right) {
+            // 자식이 없을경우 제거만
+            if (node === this.root) this.root = null;
+            else if (node.parent.left === node) node.parent.left = null;
+            else node.parent.right = null;
+        } else if (node.left && node.right) {
+            // 자식이 두개일경우 successor를 찾아서 자기에다가 대입
+            const successor = this.successor(node);
+            if (this.root === node) {
+                node.data = successor.data;
+                successor.parent.left = successor.right;
+            } else {
+                if (node.parent.left === node) {
+                    node.parent.left = successor;
+                } else {
+                    node.parent.right = successor;
+                }
+                successor.left = node.left;
+            }
+        } else {
+            // 자식이 한개일경우 부모와 연결만 한다.
+            const child = node.left || node.right;
+            if (node.parent.left === node) node.parent.left = child;
+            else node.parent.right = child;
+        }
+    }
+
+    /**
+     * 자기보다 한단계 큰 것
+     * @param {Node?} node
+     */
+    successor(node) {
+        if (node.right) {
+            return this.minimum(node.right);
+        }
+        let parent = node.parent;
+        while (parent && node === parent.right) {
+            node = parent;
+            parent = parent.parent;
+        }
+        return parent;
+    }
+
+    /**
+     * 트리의 최소값 반환
+     * @param {Node} node
+     */
+    minimum(node) {
+        while (node.left) {
+            node = node.left;
+        }
+        return node;
     }
 }
 
@@ -184,6 +239,31 @@ tree.insert(new Node({id: 14}));
 tree.display();
 
 console.log('\n검색: 14');
-tree.search(14);
+console.log(tree.search(14).data);
 console.log('\n검색: 18');
-tree.search(18);
+console.log(tree.search(18).data);
+
+console.log('\n최소값: 15');
+console.log(tree.minimum(tree.search(15)).data);
+
+console.log('\nsuccessor: 15');
+console.log(tree.successor(tree.search(15)).data);
+console.log('\nsuccessor: 14');
+console.log(tree.successor(tree.search(14)).data);
+
+console.log('\n삭제: 4 (자식 0)');
+tree.display();
+tree.delete(tree.search(4));
+tree.display();
+
+console.log('\n삭제: 3 (자식 1)');
+tree.delete(tree.search(3));
+tree.display();
+
+console.log('\n삭제: 6 (자식 2)');
+tree.delete(tree.search(6));
+tree.display();
+
+console.log('\n삭제: 15 (자식 2)');
+tree.delete(tree.search(15));
+tree.display();
