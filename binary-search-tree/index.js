@@ -157,30 +157,23 @@ class Tree {
      * @param {Node} node
      */
     delete(node) {
-        if (!node.left && !node.right) {
-            // 자식이 없을경우 제거만
-            if (node === this.root) this.root = null;
-            else if (node.parent.left === node) node.parent.left = null;
-            else node.parent.right = null;
-        } else if (node.left && node.right) {
-            // 자식이 두개일경우 successor를 찾아서 자기에다가 대입
-            const successor = this.successor(node);
-            if (this.root === node) {
-                node.data = successor.data;
-                successor.parent.left = successor.right;
-            } else {
-                if (node.parent.left === node) {
-                    node.parent.left = successor;
-                } else {
-                    node.parent.right = successor;
-                }
-                successor.left = node.left;
-            }
+        let deleteNode = node;
+        if (node.left && node.right) {
+            deleteNode = this.successor(node);
+        }
+        let child = deleteNode.left || deleteNode.right;
+        if (child) {
+            child.parent = deleteNode.parent;
+        }
+        if (!deleteNode.parent) {
+            // 삭제할 노드가 루트 노드일때
+            this.root = child;
         } else {
-            // 자식이 한개일경우 부모와 연결만 한다.
-            const child = node.left || node.right;
-            if (node.parent.left === node) node.parent.left = child;
-            else node.parent.right = child;
+            if (deleteNode === deleteNode.parent.left) deleteNode.parent.left = child;
+            else deleteNode.parent.right = child;
+        }
+        if (node !== deleteNode) {
+            node.data = deleteNode.data;
         }
     }
 
