@@ -1,14 +1,37 @@
-class Node {
-    constructor(data, left, right) {
+class TreeNode {
+    constructor(data, left, right, parent, isRed = true) {
+        /**
+         * @typedef NodeData
+         * @property {number} id
+         */
+        /**
+         * @type {NodeData}
+         */
         this.data = data;
+        /**
+         * @type {?TreeNode}
+         */
         this.left = left;
+        /**
+         * @type {?TreeNode}
+         */
         this.right = right;
-        this.parent = null;
+        /**
+         * @type {?TreeNode}
+         */
+        this.parent = parent;
+        /**
+         * @type {boolean}
+         */
+        this.isRed = isRed;
     }
 }
 
 class RedBlackTree {
     constructor(root) {
+        /**
+         * @type {?TreeNode}
+         */
         this.root = root;
     }
 
@@ -36,9 +59,13 @@ class RedBlackTree {
         const lines = out.map((item, i) => {
             const indents = Math.pow(2, h - 1 - i) - 1;
             const spaces = Math.pow(2, h - i) - 1;
-            const indent = new Array(indents).fill(0).map(_ => '  ').join('')
-            const space = new Array(spaces).fill(0).map(_ => '  ').join('');
-            const line = item.map(x => x ? (x.data.id < 10 ? ' ' + x.data.id : x.data.id) : '  ').join(space);
+            const indent = new Array(indents).fill(0).map(_ => '   ').join('')
+            const space = new Array(spaces).fill(0).map(_ => '   ').join('');
+            function toString(treeNode) {
+                const addSpace = treeNode.data.id < 10 ? ' ' + treeNode.data.id : treeNode.data.id;
+                return treeNode.isRed ? `${addSpace}👹` : `${addSpace}👿`;
+            }
+            const line = item.map(x => x ? toString(x) : '   ').join(space);
             return indent + line;
         });
 
@@ -48,7 +75,7 @@ class RedBlackTree {
 
     /**
      * @param {number} id key of node
-     * @return {Node}
+     * @return {TreeNode}
      */
     search(id) {
         function search(node, id) {
@@ -65,7 +92,7 @@ class RedBlackTree {
     }
 
     /**
-     * @param {Node} node
+     * @param {TreeNode} node
      */
     insert(node) {
         let parent = null;
@@ -84,10 +111,65 @@ class RedBlackTree {
                 parent.right = node;
             }
         }
+
+        this._fixup(node);
     }
 
     /**
-     * @param {Node} node
+     * @param {TreeNode} node
+     */
+    _fixup(node) {
+        while (node.parent && node.parent.isRed) {
+            // case 1, 2, 3
+            if (node.parent.parent.left === node.parent) {
+                let uncle = node.parent.parent.right;
+                // case 1
+                if (uncle.isRed) {
+                    node.parent.parent.isRed = true;
+                    node.parent.isRed = false;
+                    uncle.isRed = false;
+                    node = node.parent.parent;
+                }
+                // case 2
+                else if (node.parent.right === node) {
+                    node = node.parent;
+                    this.leftRotate(node);
+                }
+                // case 3
+                else {
+                    node.parent.parent.isRed = true;
+                    node.parent.isRed = false;
+                    this.rightRotate(node.parent.parent);
+                }
+            }
+            // case 4, 5, 6
+            else {
+                let uncle = node.parent.parent.left;
+                // case 1
+                if (uncle.isRed) {
+                    node.parent.parent.isRed = true;
+                    node.parent.isRed = false;
+                    uncle.isRed = false;
+                    node = node.parent.parent;
+                }
+                // case 2
+                else if (node.parent.right === node) {
+                    node = node.parent;
+                    this.leftRotate(node);
+                }
+                // case 3
+                else {
+                    node.parent.parent.isRed = true;
+                    node.parent.isRed = false;
+                    this.rightRotate(node.parent.parent);
+                }
+            }
+        }
+        this.root.isRed = false;
+    }
+
+    /**
+     * @param {TreeNode} node
      */
     delete(node) {
     }
@@ -111,7 +193,7 @@ class RedBlackTree {
     /**
      * 오른쪽 node가 있다고 가정
      * RootNode의 부모가 NIL이라고 가정
-     * @param {Node} target
+     * @param {TreeNode} target
      */
     leftRotate(target) {
         // Target의 오른쪽 자식을 저장
@@ -128,10 +210,11 @@ class RedBlackTree {
         else target.parent.right = rightChild;
         // Target자리에 온 rightChild의 왼쪽 자식에 target을 넣는다.
         rightChild.left = target;
+        target.parent = rightChild;
     }
 
     /**
-     * @param {Node} target
+     * @param {TreeNode} target
      */
     rightRotate(target) {
         const leftChild = target.left;
@@ -141,36 +224,23 @@ class RedBlackTree {
         else target.parent.right = leftChild;
         target.left = leftChild.right;
         leftChild.right = target;
+        target.parent = leftChild;
     }
 }
 
 const tree = new RedBlackTree();
-tree.insert(new Node({id: 7}));
-tree.insert(new Node({id: 4}));
-tree.insert(new Node({id: 11}));
-tree.insert(new Node({id: 3}));
-tree.insert(new Node({id: 6}));
-tree.insert(new Node({id: 9}));
-tree.insert(new Node({id: 18}));
-tree.insert(new Node({id: 2}));
-tree.insert(new Node({id: 14}));
-tree.insert(new Node({id: 19}));
-tree.insert(new Node({id: 12}));
-tree.insert(new Node({id: 17}));
-tree.insert(new Node({id: 22}));
-tree.insert(new Node({id: 20}));
+tree.insert(new TreeNode({id: 11}));
+tree.insert(new TreeNode({id: 2}));
+tree.insert(new TreeNode({id: 14}));
+tree.insert(new TreeNode({id: 1}));
+tree.insert(new TreeNode({id: 7}));
+tree.insert(new TreeNode({id: 15}));
+tree.insert(new TreeNode({id: 5}));
+tree.insert(new TreeNode({id: 8}));
 
 console.log('최초 트리 상태');
 tree.display();
 
-console.log('Left Rotate: 11');
-tree.leftRotate(tree.search(11));
-tree.display();
-
-console.log('Right Rotate: 18');
-tree.rightRotate(tree.search(18));
-tree.display();
-
-console.log('Left Rotate: root 7');
-tree.leftRotate(tree.search(7));
+console.log('Insert: 4');
+tree.insert(new TreeNode({id: 4}));
 tree.display();
