@@ -1,14 +1,33 @@
-class Node {
-    constructor(data, left, right) {
+class TreeNode {
+    constructor(data, left, right, parent) {
+        /**
+         * @typedef NodeData
+         * @property {number} id
+         */
+        /**
+         * @type {NodeData}
+         */
         this.data = data;
+        /**
+         * @type {?TreeNode}
+         */
         this.left = left;
+        /**
+         * @type {?TreeNode}
+         */
         this.right = right;
-        this.parent = null;
+        /**
+         * @type {?TreeNode}
+         */
+        this.parent = parent;
     }
 }
 
-class Tree {
+class BinarySearchTree {
     constructor(root) {
+        /**
+         * @type {?TreeNode}
+         */
         this.root = root;
     }
 
@@ -17,7 +36,7 @@ class Tree {
      * @return {Array.<number>} 전위 순회로 정렬된 키 목록
      */
     preorder() {
-        const array = [];``
+        const array = [];
         function traverse(node) {
             if (node) {
                 array.push(node.data);
@@ -63,6 +82,9 @@ class Tree {
         return array.map(x => x.id);
     }
 
+    /**
+     * 레벨 순회
+     */
     levelorder() {
         const array = [];
         function traverse(node) {
@@ -115,7 +137,7 @@ class Tree {
 
     /**
      * @param {number} id key of node
-     * @return {Node}
+     * @return {TreeNode}
      */
     search(id) {
         function search(node, id) {
@@ -132,14 +154,15 @@ class Tree {
     }
 
     /**
-     * @param {Node} node
+     * @param {TreeNode} node
      */
     insert(node) {
         let parent = null;
         let currentNode = this.root;
         while (currentNode) {
             parent = currentNode;
-            currentNode = currentNode.data.id < node.data.id ? currentNode.right : currentNode.left;
+            currentNode = currentNode.data.id < node.data.id ?
+                currentNode.right : currentNode.left;
         }
         node.parent = parent;
         if (!parent) {
@@ -154,7 +177,7 @@ class Tree {
     }
 
     /**
-     * @param {Node} node
+     * @param {TreeNode} node
      */
     delete(node) {
         let deleteNode = node;
@@ -179,7 +202,7 @@ class Tree {
 
     /**
      * 자기보다 한단계 큰 것
-     * @param {Node?} node
+     * @param {?TreeNode} node
      */
     successor(node) {
         if (node.right) {
@@ -195,7 +218,7 @@ class Tree {
 
     /**
      * 트리의 최소값 반환
-     * @param {Node} node
+     * @param {TreeNode} node
      */
     minimum(node) {
         while (node.left) {
@@ -206,7 +229,7 @@ class Tree {
 
     /**
      * 트리의 최대값 반환
-     * @param {Node} node
+     * @param {TreeNode} node
      */
     maximum(node) {
         while (node.right) {
@@ -216,18 +239,18 @@ class Tree {
     }
 }
 
-const tree = new Tree();
-tree.insert(new Node({id: 15}));
-tree.insert(new Node({id: 6}));
-tree.insert(new Node({id: 18}));
-tree.insert(new Node({id: 3}));
-tree.insert(new Node({id: 7}));
-tree.insert(new Node({id: 17}));
-tree.insert(new Node({id: 20}));
-tree.insert(new Node({id: 2}));
-tree.insert(new Node({id: 4}));
-tree.insert(new Node({id: 13}));
-tree.insert(new Node({id: 9}));
+const tree = new BinarySearchTree();
+tree.insert(new TreeNode({id: 15}));
+tree.insert(new TreeNode({id: 6}));
+tree.insert(new TreeNode({id: 18}));
+tree.insert(new TreeNode({id: 3}));
+tree.insert(new TreeNode({id: 7}));
+tree.insert(new TreeNode({id: 17}));
+tree.insert(new TreeNode({id: 20}));
+tree.insert(new TreeNode({id: 2}));
+tree.insert(new TreeNode({id: 4}));
+tree.insert(new TreeNode({id: 13}));
+tree.insert(new TreeNode({id: 9}));
 console.log('최초 트리 상태');
 tree.display();
 
@@ -239,7 +262,7 @@ console.log('후위순회');
 console.log(tree.postorder());
 
 console.log('\n14 추가');
-tree.insert(new Node({id: 14}));
+tree.insert(new TreeNode({id: 14}));
 tree.display();
 
 console.log('\n검색: 14');

@@ -2,6 +2,7 @@ Project for data structure study.
 
 |version|target|note|
 |---|---|---|
+|1.3.1|Binary Search Tree|Clean up code: change node to treeNode|
 |1.3.0|Red-Black Tree|Add feature: insert, fixup<br>Update feature: left, right rotate|
 |1.2.0|Red-Black Tree|Add feature: left rotate, right rotate|
 |1.1.2|Binary Search Tree|Add feature: maximum|
