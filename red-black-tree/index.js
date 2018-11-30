@@ -193,68 +193,70 @@ class RedBlackTree {
         }
 
         if (!deleteNode.isRed) {
-            this._deleteFixup(child);
+            this._deleteFixup(deleteNode.parent, child);
         }
     }
 
     /**
      * @param {TreeNode} node
      */
-    _deleteFixup(node) {
+    _deleteFixup(parent, node) {
         // Case 1, 2, 3, 4
         while ((!node || !node.isRed) && node !== this.root) {
-            if (node.parent.left === node) {
-                let sibling = node.parent.right;
+            if (parent.left === node) {
                 // Case 1
-                if (sibling.isRed) {
-                    node.parent.isRed = true;
-                    sibling.isred = false;
-                    this.leftRotate(node.parent);
+                if (parent.right.isRed) {
+                    parent.isRed = true;
+                    parent.right.isRed = false;
+                    this.leftRotate(parent);
                 }
-                if (!sibling.left.isRed && !sibling.right.isRed) {
+                if ((!parent.right.left || !parent.right.left.isRed) && (!parent.right.right || !parent.right.right.isRed)) {
                     // Case 2
-                    sibling.isRed = true;
-                    node.parent.isRed = false;
-                    node = node.parent;
+                    parent.right.isRed = true;
+                    parent.isRed = false;
+                    node = parent;
+                    parent = node.parent;
                 } else {
                     // Case 3
-                    if (!sibling.right.isRed) {
-                        sibling.left.isRed = false;
-                        sibling.isRed = true;
-                        this.rightRotate(sibling);
+                    if (!parent.right.right || !parent.right.right.isRed) {
+                        parent.right.left.isRed = false;
+                        parent.right.isRed = true;
+                        this.rightRotate(parent.right);
+                        parent.right = parent.right;
                     }
                     // Case 4
-                    sibling.isRed = node.parent.isRed;
-                    node.parent.isRed = false;
-                    sibling.right.isRed = false;
-                    this.leftRotate(node.parent);
+                    parent.right.isRed = parent.isRed;
+                    parent.isRed = false;
+                    if (parent.right.right) parent.right.right.isRed = false;
+                    this.leftRotate(parent);
                     node = this.root;
                 }
             } else {
-                let sibling = node.parent.left;
                 // Case 5
-                if (sibling.isRed) {
-                    node.parent.isRed = true;
-                    sibling.isred = false;
-                    this.rightRotate(node.parent);
+                if (parent.left.isRed) {
+                    parent.isRed = true;
+                    parent.left.isRed = false;
+                    this.rightRotate(parent);
                 }
-                if (!sibling.left.isRed && !sibling.right.isRed) {
+                if ((!parent.left.left || !parent.left.left.isRed) && (!parent.left.right || !parent.left.right.isRed)) {
                     // Case 6
-                    sibling.isRed = true;
-                    node.parent.isRed = false;
-                    node = node.parent;
+                    parent.left.isRed = true;
+                    parent.isRed = false;
+                    node = parent;
+                    parent = node.parent;
                 } else {
                     // Case 7
-                    if (!sibling.left.isRed) {
-                        sibling.right.isRed = false;
-                        sibling.isRed = true;
-                        this.leftRotate(sibling);
+                    if (!parent.left.left || !parent.left.left.isRed) {
+                        parent.left.right.isRed = false;
+                        parent.left.isRed = true;
+                        this.leftRotate(parent.left);
+                        parent.left = parent.left;
                     }
                     // Case 8
-                    sibling.isRed = node.parent.isRed;
-                    node.parent.isRed = false;
-                    sibling.left.isRed = false;
-                    this.rightRotate(node.parent);
+                    parent.left.isRed = parent.isRed;
+                    parent.isRed = false;
+                    if (parent.left.left) parent.left.left.isRed = false;
+                    this.rightRotate(parent);
                     node = this.root;
                 }
             }
@@ -299,6 +301,8 @@ class RedBlackTree {
         const rightChild = target.right;
         // Target의 오른쪽 자식에 rightChild의 왼쪽 자식을 저장
         target.right = rightChild.left;
+        // rightChild의 왼쪽자식의 부모를 target으로 바꿈
+        if (rightChild.left) rightChild.left.parent = target;
         // rightChild의 부모를 target부모로 설정
         rightChild.parent = target.parent;
         // 만약 target이 루트노드 일경우 rigthChild를 루트노드로 변경
@@ -318,6 +322,7 @@ class RedBlackTree {
     rightRotate(target) {
         const leftChild = target.left;
         target.left = leftChild.right;
+        if (leftChild.right) leftChild.right.parent = target;
         leftChild.parent = target.parent;
         if (!target.parent) this.root = leftChild;
         else if (target.parent.left === target) target.parent.left = leftChild;
@@ -333,13 +338,25 @@ tree.insert(new TreeNode({id: 2}));
 tree.insert(new TreeNode({id: 14}));
 tree.insert(new TreeNode({id: 1}));
 tree.insert(new TreeNode({id: 7}));
-tree.insert(new TreeNode({id: 15}));
 tree.insert(new TreeNode({id: 5}));
 tree.insert(new TreeNode({id: 8}));
+tree.insert(new TreeNode({id: 4}));
 
 console.log('최초 트리 상태');
 tree.display();
 
-console.log('Insert: 4');
-tree.insert(new TreeNode({id: 4}));
+console.log('Insert: 13');
+tree.insert(new TreeNode({id: 13}));
+tree.display();
+
+console.log('Delete: 8 (case: 3, 4)');
+tree.delete(tree.search(8));
+tree.display();
+
+console.log('Delete: 8 (case: 3, 4)');
+tree.delete(tree.search(5));
+tree.display();
+
+console.log('Delete: 1 (case: 2)');
+tree.delete(tree.search(1));
 tree.display();
