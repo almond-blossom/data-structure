@@ -213,7 +213,6 @@ class RedBlackTree {
                 if ((!parent.right.left || !parent.right.left.isRed) && (!parent.right.right || !parent.right.right.isRed)) {
                     // Case 2
                     parent.right.isRed = true;
-                    parent.isRed = false;
                     node = parent;
                     parent = node.parent;
                 } else {
@@ -241,7 +240,6 @@ class RedBlackTree {
                 if ((!parent.left.left || !parent.left.left.isRed) && (!parent.left.right || !parent.left.right.isRed)) {
                     // Case 6
                     parent.left.isRed = true;
-                    parent.isRed = false;
                     node = parent;
                     parent = node.parent;
                 } else {
@@ -353,10 +351,14 @@ console.log('Delete: 8 (case: 3, 4)');
 tree.delete(tree.search(8));
 tree.display();
 
-console.log('Delete: 8 (case: 3, 4)');
+console.log('Delete: 5');
 tree.delete(tree.search(5));
 tree.display();
 
 console.log('Delete: 1 (case: 2)');
 tree.delete(tree.search(1));
+tree.display();
+
+console.log('Delete: 2 (case: 1)');
+tree.delete(tree.search(2));
 tree.display();
