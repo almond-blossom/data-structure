@@ -359,6 +359,17 @@ console.log('Delete: 1 (case: 2)');
 tree.delete(tree.search(1));
 tree.display();
 
-console.log('Delete: 2 (case: 1)');
+console.log('Case 1 확인용 트리');
+tree.insert(new TreeNode({id: 5}));
+tree.insert(new TreeNode({id: 10}));
+tree.insert(new TreeNode({id: 15}));
+tree.insert(new TreeNode({id: 6}));
+tree.insert(new TreeNode({id: 6.5}));
+tree.insert(new TreeNode({id: 12}));
+tree.insert(new TreeNode({id: 13.5}));
+tree.insert(new TreeNode({id: 5.5}));
+tree.display();
+
+console.log('Delete: 2 (case: 1, 4)');
 tree.delete(tree.search(2));
 tree.display();
